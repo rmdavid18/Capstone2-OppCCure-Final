@@ -1,0 +1,401 @@
+﻿@page
+@model Capstonep2.Pages.Manage.Consultation.ViewDetailsModel
+@using Capstonep2.Infrastructure.Domain.Models.Enums;
+@{
+}
+
+<h1 class="text-center">PATIENT APPOINTMENT DETAILS</h1>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-autos">
+            <div class="card ">
+                <h3 class="text-center">Patient Information</h3>
+
+                <div class="card-body ">
+                    <table class="table">
+                        <tr>
+                            <th>Full Name: </th>
+                            <td class="text-uppercase"> @Model?.View?.Appointment?.Patient?.FirstName @Model?.View?.Appointment?.Patient.MiddleName @Model?.View?.Appointment?.Patient?.LastName </td>
+                        </tr>
+                        <tr>
+                            <th>Gender:</th>
+                            <td class="text-uppercase">@Model?.View?.Appointment?.Patient?.Gender</td>
+                        </tr>
+                        <tr>
+                            <th>Birthdate:</th>
+                            <td class="text-uppercase">@Model?.View?.Appointment?.Patient?.BirthDate</td>
+                        </tr >
+                        <tr>
+                            <th>Address:</th>
+                            <td class="text-uppercase">@Model?.View?.Appointment?.Patient?.Address</td>
+                        </tr>
+                        <tr>
+                            <th>Contact No:</th>
+                            <td class="text-uppercase">@Model?.View?.Appointment?.Patient?.Contact</td>
+                        </tr>
+                    </table>
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<div class="container">
+    <div class="card">
+        <h3 class="text-center">Appoinment Details</h3>
+        <div class="card-body ">
+            <table class="table">
+
+                <tr>
+                    <th>DateTime: </th>
+                    <td class="text-uppercase"> @Model?.View?.Appointment?.StartTime - @Model?.View?.Appointment?.EndTime </td>
+                </tr>
+                <tr>
+                    <th>Status:</th>
+                    <td class="text-uppercase"> @Model?.View?.Appointment?.Status</td>
+                </tr>
+                <tr>
+                    <th>Syptoms:</th>
+                    <td class="text-uppercase">@String.Join(",",Model?.View?.SymptomsList)</td>
+                </tr>
+                <tr>
+                    <th>PurposeOfVisit:</th>
+                    <td class="text-uppercase">@String.Join(",",Model?.View?.PurposesList)</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="card">
+        <h3 class="text-center">Consultations Details</h3>
+        <div class="card-body ">
+            <table class="table">
+
+                <tr>
+                    <th>Findings: </th>
+                    <td class="text-uppercase"> @String.Join(",",Model.View.FindingsList) </td>
+                </tr>
+                <tr>
+                    <th>Descriptions: </th>
+                    <td class="text-uppercase">@Model.View.Appointment.FDescription</td>
+                </tr>
+                <tr>
+                    <th>Presciption: </th>
+                    <td class="text-uppercase">@String.Join(",",Model.View.PrescriptionsList)</td>
+                </tr>
+                <tr>
+                    <th>Descriptions: </th>
+                    <td class="text-uppercase">@Model.View.Appointment.PDescription</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container">
+    <a href="~/manage/admin/Dashboard?" class="btn btn-info text-uppercase">
+        <i class="fa fa-pencil">BACK</i>
+    </a>
+    @if(Model.View.Appointment.Status != Status.Pending)
+    {
+        <button class="btn btn-success text-uppercase" type="button" disabled>
+            CREATE
+        </button>
+    }
+    else
+    {       
+    <button class="btn btn-success" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreate">
+        CREATE
+    </button>
+    }
+    <div class="collapse" id="collapseCreate">
+        <div class="card">
+            <div class="card-header">
+                <p>Findings and Prescriptions</p>
+            </div>
+            <div class="card-body bg-mustardlite">
+                <form method="Post" asp-page-handler="AddConsul">
+                    <label>Findings</label>
+                    <div class="form-group justify-content-center">
+                        <select class="form-control selectFinding" name="View.FList" multiple>
+                            @{
+                                if (Model.View.Findings != null && Model.View.Findings.Count() > 0)
+                                {
+                                    foreach (var finding in Model.View.Findings)
+                                    {
+                                        <option value="@finding.FName">@finding.FName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                    <label asp-for="View.FDesc">Findings Description</label>
+                    <input type="text" class="form-control" placeholder="Description" maxlength="500" name="View.FDesc" asp-for="View.FDesc">
+                    </div>
+
+
+                    <label>Prescriptions</label>
+                    <div class="form-group justify-content-center w-100">
+                        <select class="form-control selectGamot w-100" name="View.PList" multiple>
+                            @{
+                                if (Model.View.Gamot != null && Model.View.Gamot.Count() > 0)
+                                {
+                                    foreach (var gamot in Model.View.Gamot)
+                                    {
+                                        <option value="@gamot.GName">@gamot.GName</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                    <label asp-for="View.PDesc">Prescriptions Descriptions</label>
+                    <input type="text" class="form-control" placeholder="Description" maxlength="500" name="View.PDesc" asp-for="View.PDesc">
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" placeholder="Enter Address" asp-for="View.ApptId" value="@Model.View.ApptId">
+                    </div>
+                    <div class="form-group alert-danger">
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    @if (Model.View.Appointment.Status == Status.Completed || Model.View.Appointment.Status == Status.Cancelled || Model.View.Appointment.Status == Status.NoShow)
+    {
+        <button class="btn btn-danger text-uppercase" type="button" disabled>
+            EDiT
+        </button>
+    }
+
+    else
+    {
+    <button class="btn btn-danger text-uppercase" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEdit">
+       EDIT
+    </button>
+    }
+
+
+    <div class="collapse" id="collapseEdit">
+        <div class="card">
+            <div class="card-header">
+                <p>Edit appointment</p>
+            </div>
+            <div class="card-body bg-mustardlite">
+
+                
+
+
+                <form method="Post" asp-page-handler="Update">
+
+                    <div class="form-group justify-content-center">
+                        <input type="datetime-local" id="picker" data-format="mm-dd-yyyy" class="form-control" asp-for="View.StartTime">
+                        <input type="hidden" placeholder="Enter Address" asp-for="View.ApptId" value="@Model.View.ApptId">
+                    </div>
+
+                    <label>Symptoms</label>
+                    <div class="form-group justify-content-center">
+                        <select class="form-control selectSymptomedit " name="View.SymptomsEdit" multiple>
+                            @{
+                                if (Model.View.Sintomas != null && Model.View.Sintomas.Count() > 0)
+                                {
+                                    foreach (var symptom in Model.View.Sintomas)
+                                    {
+                                        <option value="@symptom.Id">@symptom.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+
+
+
+                    <label>Purpose Of Visit</label>
+                    <div class="form-group justify-content-center w-100">
+                        <select class="form-control selectPurposeedit w-100" name="View.PurposesEdit" multiple>
+                            @{
+                                if (Model.View.Dahilan != null && Model.View.Dahilan.Count() > 0)
+                                {
+                                    foreach (var purpose in Model.View.Dahilan)
+                                    {
+                                        <option value="@purpose.Id">@purpose.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group alert-danger">
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.View.Appointment.Status == Status.Completed)
+    {
+        <button class="btn btn-info text-uppercase" type="button" disabled>
+           STATUS
+        </button>
+    }
+    else
+    {        
+    <button type="button" class="btn btn-info text-uppercase" data-bs-toggle="modal" data-bs-target="#cancel">
+        <i class="fa fa-pencil">STATUS</i>
+    </button>
+    }
+
+
+    <div class="modal fade" id="cancel" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                </div>
+
+                <div class="modal-body bg-mustardlite">
+                    <form method="Post" asp-page-handler="EditStatus">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select class="form-control" id="status" asp-for="View.StatusEdit">
+                                <option value="0">Pending</option>
+                                <option value="1">Cancelled</option>
+                                <option value="2">InProgress</option>
+                                <option value="3">NoShow</option>
+                                <option value="4">Completed</option>
+                            </select>
+                        </div>
+                        <input type="hidden" class="form-control" asp-for="View.ApptId" value="@Model.View.ApptId">
+                        <div class="form-group alert-danger">
+                            @Html.ValidationSummary()
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+   
+
+@section Scripts{
+
+    <script>
+        $('.selectSintomas').select2({
+            ajax: {
+                url: '?handler=sintomas',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+
+    <script>
+        $('.selectDahilan').select2({
+            ajax: {
+                url: '?handler=dahilan',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+
+    <script>
+        $('.selectFinding').select2({
+            ajax: {
+                url: '?handler=finding',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+    <script>
+        $('.selectGamot').select2({
+            ajax: {
+                url: '?handler=gamot',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+
+    <script>
+        $('.selectSymptomedit').select2({
+            ajax: {
+                url: '?handler=sintomasedit',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+    <script>
+        $('.selectPurposeedit').select2({
+            ajax: {
+                url: '?handler=dahilanedit',
+                data: function (params) {
+                    var query = {
+                        keyword: params.term,
+                        page: params.page || 1
+                    }
+                    return query;
+                },
+                headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+            }
+        });
+    </script>
+}
